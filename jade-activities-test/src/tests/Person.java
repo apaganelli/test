@@ -30,6 +30,10 @@ public class Person extends Agent {
 		return this.workingTime;
 	}
 	
+	public int getWorkingTime() {
+		return this.workingTime;
+	}
+	
 	public int addWorkedTime(int time) {
 		if (time > 0)
 			this.workedTime += time;

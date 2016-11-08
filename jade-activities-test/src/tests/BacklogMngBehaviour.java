@@ -59,6 +59,8 @@ class BacklogMngBehaviour extends ParallelBehaviour {
 				
 				if(msg != null) {
 					String content = msg.getContent();
+					System.out.println(content);				
+					
 					if (content.equals("SHOW_ACTIVITIES")) {				
 						List<Activity> listActivities = backlog.getActivities();
 				
@@ -70,8 +72,16 @@ class BacklogMngBehaviour extends ParallelBehaviour {
 							System.out.println(" - Duration: " + activity.getDuration() + " min");
 						}	
 					}
-					else if (content.equals("GET_ACTIVITY")) {
+					else if (content.startsWith("GET_ACTIVITY")) {
 						System.out.println("Received a request for new activity");
+						
+						String[] cmds = content.split(":");
+						
+						ACLMessage reply = msg.createReply();
+						reply.setProtocol("ACTIVITY");
+						reply.setContent("One activity of " + cmds[1]);
+						myAgent.send(reply);
+
 					}					
 				}
 			}

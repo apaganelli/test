@@ -2,7 +2,7 @@ package tests;
 
 /*
  *  This class represents the activity.
- *  Every activity belongs to a category and has a duration time.
+ *  Every activity belongs to a category and has a duration time in general minutes.
  */
 
 public class Activity {

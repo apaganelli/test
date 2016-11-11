@@ -1,3 +1,34 @@
+/*
+ * Class Person is a consumer of activities/tasks following general policies and personal objectives.
+ * 
+ * Each Person has some working time in which it should execute as many activities as possible.
+ * Any available time ideally should be filled out with new activities.
+ * 
+ * There is a backlog of activities where each Person asks for an objective which depends on the amount
+ * of activities per category, total duration and number of active workers (Person).
+ * 
+ * After getting one objective, Person starts getting activities from the backlog based on its given
+ * objective. However, the activities are selected randomly by the backlog. The backlog tries to increase
+ * the change of providing activities related to Person's objective, but it is not guarantee.
+ * 
+ * Meanwhile Persons fills up theirs working time, they may negotiate activities with their pairs based on 
+ * the needs to optimise its portfolio of activities. Person might exchange with pairs objectives 
+ * when their portfolio of activities are very distant from their objectives.
+ * 
+ * The general objective of the system is to consume the maximum of activities in the backlog following
+ * the available resources (sum of working time of all workers) and their personal objectives.
+ * 
+ * Each activity belongs to a category and has a duration. It may have an associated cost, a deadline and
+ * a starting time. It may require some skills. It means that only skilled Person can executed that 
+ * activity. 
+ * 
+ * The environment may have more than one backlog (warehouse of activities - another agent) and they may 
+ * negotiate activities as well, specialising in some category of activity.
+ * 
+ * The Warehouses or Person might start new workers to help them in order to consume/profit more activities.
+ * 
+ */
+
 package tests;
 
 import java.util.ArrayList;

@@ -72,7 +72,19 @@ public class runAgent {
 
 			controller = controllerAgentContainer
 
-					.acceptNewAgent("João", new Person());
+					.acceptNewAgent("João", new Person(200, 1.1));
+
+			controller.start();
+			
+			controller = controllerAgentContainer
+
+					.acceptNewAgent("Maria", new Person(200, 1.1));
+
+			controller.start();
+
+			controller = controllerAgentContainer
+
+					.acceptNewAgent("Joana", new Person(200, 1.1));
 
 			controller.start();
 
@@ -92,18 +104,15 @@ public class runAgent {
 
 	/**
 	
-	   * 
+	* 
 	
-	   */
+	*/
 
 	public static void main(String args[]) {
 
 		Boot.main(new String[] { "-gui" });
 
-		//new runAgent(new HelloAgent(), "HelloAgent", "meuContainer");
-		// new runAgent(new InfoAgents(), "InfoAgents", "meuContainer");
-
-		new runAgent(new Person(), "José", "meuContainer");
+		new runAgent(new Person(200, 1.1), "José", "meuContainer");
 		// new runAgent(new BacklogManager(), "Backlog-Mng", "meuContainer");
 
 	}

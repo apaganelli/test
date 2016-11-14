@@ -1,5 +1,6 @@
 package tests;
 
+import java.io.IOException;
 import java.util.List;
 
 import jade.core.Agent;
@@ -29,7 +30,6 @@ class BacklogMngBehaviour extends ParallelBehaviour {
 		this.addSubBehaviour(new CyclicBehaviour(agent) {
 			
 			public void action() {
-				// System.out.println("Cyclic behaviour of Backlog Manager");
 				MessageTemplate mt = MessageTemplate.MatchProtocol("OBJECTIVE");
 				
 				ACLMessage msg = agent.receive(mt);
@@ -59,29 +59,70 @@ class BacklogMngBehaviour extends ParallelBehaviour {
 				
 				if(msg != null) {
 					String content = msg.getContent();
-					System.out.println(content);				
+					System.out.println("\nBacklog receiving request: " + content + " - " + msg.getSender().getLocalName());				
 					
 					if (content.equals("SHOW_ACTIVITIES")) {				
 						List<Activity> listActivities = backlog.getActivities();
 				
 						System.out.println(myAgent.getLocalName() + "BL List of Activities: ");
 						
+						int i = 0;
 						for (Activity activity : listActivities) {
 							System.out.print("Name: " + activity.getName());
 							System.out.print(" - " + activity.getCategory());
 							System.out.println(" - Duration: " + activity.getDuration() + " min");
+							i++;
+							if(i > 9)
+								break;
 						}	
 					}
 					else if (content.startsWith("GET_ACTIVITY")) {
-						System.out.println("Received a request for new activity");
-						
+						// cmds[0] = GET_ACTIVITY, cmds[1] = objective, cmds[2] = available time.
 						String[] cmds = content.split(":");
-						
 						ACLMessage reply = msg.createReply();
 						reply.setProtocol("ACTIVITY");
-						reply.setContent("One activity of " + cmds[1]);
-						myAgent.send(reply);
+						
+						switch(msg.getPerformative()) {
+						case ACLMessage.REQUEST:
+							Activity item = backlog.getOneActivity(cmds[1]);
+							if( item == null) {
+								@SuppressWarnings("unused")
+								Inform inform = new Inform("Backlog could not get an activity, probably it is empty", "ALERT");
+								reply.setPerformative(ACLMessage.REFUSE);							
+								reply.setContent("\nActivities not available. Empty backlog. Wait a while or finishes.\n");
+								myAgent.send(reply);
+							}
+							else {
+								System.out.println("Backlog got item " + item.getName());	
+								reply.setPerformative(ACLMessage.PROPOSE);
+								reply.setContent(item.getCategory() + ":" + item.getDuration() + ":" + item.getName() + ":");
+							}
+							
+							myAgent.send(reply);
+							break;
+						case ACLMessage.ACCEPT_PROPOSAL:
+							Activity task = backlog.getActivitybyName(cmds[1]);
 
+							if( task == null) {
+								@SuppressWarnings("unused")
+								Inform inform = new Inform("Backlog could not get an activity, probably it is empty", "ALERT");
+								reply.setPerformative(ACLMessage.REFUSE);							
+								reply.setContent("\nActivities not available. Empty backlog. Wait a while or finishes.\n");
+								myAgent.send(reply);
+							} else {
+								System.out.println("Backlog got item " + task.getName());	
+								reply.setPerformative(ACLMessage.AGREE);
+
+								try {
+									reply.setContentObject(task);
+								} catch (IOException e) {
+									e.printStackTrace();
+								}
+							}
+							
+							myAgent.send(reply);
+							break;
+						}	
 					}					
 				}
 			}

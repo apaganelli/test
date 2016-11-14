@@ -13,8 +13,9 @@ public class Activity implements Serializable {
 	public static int CAT_STATUS_AVAILABLE = 1;
 	public static int CAT_STATUS_ALLOCATED = 2;
 	public static int CAT_STATUS_ACTIVE = 3;
+	public static int CAT_STATUS_LOCKED = 4;
 	public static int CAT_STATUS_FINISHED = 0;
-	
+		
 	private String name;
 	private String category;
 	private int duration;

@@ -28,7 +28,7 @@ public class BacklogManager extends Agent {
 	
 	
 	protected void setup() {
-		auto_configure_activities(50, 3);
+		auto_configure_activities(200);
 		addBehaviour(new BacklogMngBehaviour(this, this));
 	}
 
@@ -36,23 +36,17 @@ public class BacklogManager extends Agent {
 	/*
 	 * Loads certain amount of activities into the backlog.
 	 */
-	protected void auto_configure_activities(int amount, int duration) {
-		int j = 0;
-		int k = 0;
+	protected void auto_configure_activities(int amount) {
+		Random rand = new Random();
 		String name = "task-";
 		String selectedCategory;
 		int time;
 		
 		for(int i = 0; i<amount; i++) {
-			selectedCategory = category[j];
-			time = (k * category.length) + duration + j;
+			selectedCategory = category[rand.nextInt(10000) % category.length];
+			time = rand.nextInt(30) + 1;
 			Activity element = new Activity(name + i, selectedCategory, time);			
 			this.addActivity(element);
-			
-			if (++j == category.length) {
-				k++;
-				j = 0;
-			}
 		}
 	}
 	

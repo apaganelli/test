@@ -310,7 +310,7 @@ public class PersonBehaviour extends FSMBehaviour {
 						ExchangeActivity(p, -2, null);
 					}
 					
-					if(p.getWorkedTime() > (p.getWorkingTime()*p.getSuperiorBound()) && p.hasActvitiestoExchange())
+					if(p.getWorkedTime() < (p.getWorkingTime()*p.getSuperiorBound()) && p.hasActvitiestoExchange())
 						this.stage = 4;
 					else
 						this.stage = 5;
@@ -318,11 +318,16 @@ public class PersonBehaviour extends FSMBehaviour {
 				
 				break;
 			case 5:
-				p.listActivities();
-				this.stage = 6;
-				break;
-			
-			case 6:
+				int[] totals = p.getTotalbyCategory();
+				int i = 1;
+				
+				for(int num: totals) {
+					System.out.println("Cateoory " + i + "  total: " + num);
+					i++;
+				}
+				
+				System.out.println("CASE-6" + p.getLocalName() + " " + p.getGoals());
+				
 				onEnd();
 			}			
 		}		
@@ -375,9 +380,9 @@ public class PersonBehaviour extends FSMBehaviour {
 					if(p.hasActvitiestoExchange(args[1])) {
 						// just get the item without removing it. its category and wished max_time.
 						Activity item = p.getActivitytoExchange(false, args[1], Integer.parseInt(args[3]));
-						String list = p.getActivitytoExchange(args[1]);
 						
-						inform.show("test exchange: " + list);
+						// String list = p.getActivitytoExchange(args[1]);						
+						// inform.show("test exchange: " + list);
 												
 						if (item != null) {
 							answer.setPerformative(ACLMessage.PROPOSE);

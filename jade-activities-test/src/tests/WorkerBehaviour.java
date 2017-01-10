@@ -219,7 +219,7 @@ public class WorkerBehaviour extends FSMBehaviour {
 				else {
 					// We have already surpass our capacity to carry out the activities.
 					@SuppressWarnings("unused")
-					Inform inform = new Inform(name + " Superior Bound reached " + p.getWorkedTime(), "CASE 2B - Inform");
+					Notify inform = new Notify(name + " Superior Bound reached " + p.getWorkedTime(), "CASE 2B - Inform");
 					printTotals(p, "CASE 2b ");
 					this.stage = 4;
 				}
@@ -338,7 +338,7 @@ public class WorkerBehaviour extends FSMBehaviour {
 			
 			answer.setProtocol("EXCHANGE_ACTIVITY");
 
-			Inform inform = new Inform("Exchange Activity Function");
+			Notify inform = new Notify("Exchange Activity Function");
 			
 			if (partners.length > 0) {
 				switch(performative) {

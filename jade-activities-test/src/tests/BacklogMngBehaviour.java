@@ -89,7 +89,7 @@ class BacklogMngBehaviour extends ParallelBehaviour {
 							Activity item = backlog.getOneActivity(cmds[1]);
 							if( item == null) {
 								@SuppressWarnings("unused")
-								Inform inform = new Inform("Backlog could not get an activity, probably it is empty", "ALERT");
+								Notify inform = new Notify("Backlog could not get an activity, probably it is empty", "ALERT");
 								reply.setPerformative(ACLMessage.REFUSE);							
 								reply.setContent("\nActivities not available. Empty backlog. Wait a while or finishes.\n");
 								myAgent.send(reply);
@@ -107,7 +107,7 @@ class BacklogMngBehaviour extends ParallelBehaviour {
 
 							if( task == null) {
 								@SuppressWarnings("unused")
-								Inform inform = new Inform("Backlog could not get an activity, probably it is empty", "ALERT");
+								Notify inform = new Notify("Backlog could not get an activity, probably it is empty", "ALERT");
 								reply.setPerformative(ACLMessage.REFUSE);							
 								reply.setContent("\nActivities not available. Empty backlog. Wait a while or finishes.\n");
 								myAgent.send(reply);

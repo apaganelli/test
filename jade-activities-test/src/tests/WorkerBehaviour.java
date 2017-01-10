@@ -33,14 +33,12 @@ import jade.core.AID;
  *  		Propose (Ok) 
  *  		Receive and verify (Ok)
  *  		Perform (Ok)
- *  		Refuse
+ *  		Refuse (Ok)
  *  		Check for new workers
- *  		Deal with many partners at same time.
+ *  		Deal with many partners at same time. (Ok)
  *  		Suspend/delete/register again in DF
  *  
  *  	Register backlog-managers in DF.
- *  
- *  	Create the messages and exchange mechanisms
  *  
  *  	Exchange activities with backlog.
  *  	May implement combination of objectives.
@@ -51,13 +49,13 @@ import jade.core.AID;
  *  	in order to optimise the solution.
  */
 
-public class PersonBehaviour extends FSMBehaviour {
+public class WorkerBehaviour extends FSMBehaviour {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 1L;
 	
-	public PersonBehaviour(Agent a, Person p) {
+	public WorkerBehaviour(Agent a, Worker p) {
 		super(a);
 		
 		// Register state A (first state)
@@ -76,9 +74,9 @@ public class PersonBehaviour extends FSMBehaviour {
 		 */
 		private static final long serialVersionUID = 1L; 
 		private int stage;
-		private Person p;
+		private Worker p;
 		
-		public PhaseOne(Person a) {
+		public PhaseOne(Worker a) {
 			super(a);
 			this.p = a;
 			this.stage = 1;
@@ -136,10 +134,10 @@ public class PersonBehaviour extends FSMBehaviour {
 		private static final long serialVersionUID = 1L;
 		private int stage = 1;
 		private Activity item;
-		private Person p;
+		private Worker p;
 		private DFAgentDescription[] partners;
 		
-		public PhaseTwo(Person a) {
+		public PhaseTwo(Worker a) {
 			super(a);
 			this.p = a;
 
@@ -177,7 +175,6 @@ public class PersonBehaviour extends FSMBehaviour {
 			ACLMessage ex_msg = p.receive(mt);
 			
 			if(ex_msg != null) {
-				Inform inform = new Inform("CASE 5 (" + ex_msg.getPerformative() + ")");
 				ExchangeActivity(p, ex_msg.getPerformative(), ex_msg);				
 				this.stage = 2;
 			}
@@ -187,7 +184,7 @@ public class PersonBehaviour extends FSMBehaviour {
 				/*
 				 *  Just to show the activities registered in the backlog.
 				 */
-				System.out.println(name + " getting activities and negotiation.");
+				System.out.println(name + " getting activities and start negotiation.");
 				{
 					ACLMessage msg = new ACLMessage(ACLMessage.REQUEST);
 					AID r_aid = new AID ("Backlog-mng", AID.ISLOCALNAME);
@@ -223,6 +220,7 @@ public class PersonBehaviour extends FSMBehaviour {
 					// We have already surpass our capacity to carry out the activities.
 					@SuppressWarnings("unused")
 					Inform inform = new Inform(name + " Superior Bound reached " + p.getWorkedTime(), "CASE 2B - Inform");
+					printTotals(p, "CASE 2b ");
 					this.stage = 4;
 				}
 				
@@ -244,7 +242,7 @@ public class PersonBehaviour extends FSMBehaviour {
 						System.out.println("Storing object "  + name);
 						try {
 							item = (Activity) msg2.getContentObject();
-							p.setOneActivity(item);
+							p.setActivity(item);
 						} catch (UnreadableException e) {
 							System.out.println("Não conseguiu pegar o item.");
 							e.printStackTrace();
@@ -289,7 +287,7 @@ public class PersonBehaviour extends FSMBehaviour {
 				}
 			case 4:				
 				/*
-				 *  If decide to exchange with other agents, that is the right time.
+				 *  If decided to exchange activities with other agents, that's the right time.
 				 *  If not, just wait to make a new request or finishes if working time is ok.
 				 *  May implement a token pass in order to organise orders to backlog.
 				 *  Thus, getting from backlog would be ordered and exchange among agents asynchronous.
@@ -318,16 +316,8 @@ public class PersonBehaviour extends FSMBehaviour {
 				
 				break;
 			case 5:
-				int[] totals = p.getTotalbyCategory();
-				int i = 1;
-				
-				for(int num: totals) {
-					System.out.println("Cateoory " + i + "  total: " + num);
-					i++;
-				}
-				
-				System.out.println("CASE-6" + p.getLocalName() + " " + p.getGoals());
-				
+				printTotals(p, "CASE-5 ");
+				this.stage = 4;
 				onEnd();
 			}			
 		}		
@@ -335,7 +325,7 @@ public class PersonBehaviour extends FSMBehaviour {
 		//
 		// Routine to manage all the exchange process between workers
 		//
-		public boolean ExchangeActivity(Person p, int performative, ACLMessage received) {
+		public boolean ExchangeActivity(Worker p, int performative, ACLMessage received) {
 			String[] args = null;
 			ACLMessage answer;
 			
@@ -468,7 +458,7 @@ public class PersonBehaviour extends FSMBehaviour {
 
 					try {
 						Activity task = (Activity) received.getContentObject();						
-						p.setOneActivity(task);						
+						p.setActivity(task);						
 						inform.show(p.getLocalName() + " received/stored activity " + task.getCategory() + " " + task.getDuration());
 						p.listActivities();						
 					} catch (UnreadableException e) {
@@ -492,7 +482,7 @@ public class PersonBehaviour extends FSMBehaviour {
 					int i = 1;
 					
 					for(int num: totals) {
-						System.out.println("Cateoory " + i + "  total: " + num);
+						System.out.println("Category " + i + "  total: " + num);
 						i++;
 					}
 					
@@ -505,7 +495,20 @@ public class PersonBehaviour extends FSMBehaviour {
 			}	
 										
 			return true;
-		}	
+		}
+		
+		public void printTotals(Worker p, String phase) {
+			int[] totals = p.getTotalbyCategory();
+			int i = 1;
+			
+			System.out.println(phase + " - " + p.getLocalName() + " " + p.getGoals());
+			
+			for(int num: totals) {
+				System.out.println("Category " + i + "  total: " + num);
+				i++;
+			}			
+		}		
+		
 	}
 		
 }

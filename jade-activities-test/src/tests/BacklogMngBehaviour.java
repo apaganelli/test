@@ -61,10 +61,11 @@ class BacklogMngBehaviour extends ParallelBehaviour {
 					String content = msg.getContent();
 					System.out.println("\nBacklog receiving request: " + content + " - " + msg.getSender().getLocalName());				
 					
+					// Just to take a look at what kind of activities are stored into backlog.
 					if (content.equals("SHOW_ACTIVITIES")) {				
 						List<Activity> listActivities = backlog.getActivities();
 				
-						System.out.println(myAgent.getLocalName() + "BL List of Activities: ");
+						System.out.println(myAgent.getLocalName() + "BL List of first 10 Activities:");
 						
 						int i = 0;
 						for (Activity activity : listActivities) {
@@ -77,6 +78,7 @@ class BacklogMngBehaviour extends ParallelBehaviour {
 						}	
 					}
 					else if (content.startsWith("GET_ACTIVITY")) {
+						// The format of the command line (content of the message) is:
 						// cmds[0] = GET_ACTIVITY, cmds[1] = objective, cmds[2] = available time.
 						String[] cmds = content.split(":");
 						ACLMessage reply = msg.createReply();

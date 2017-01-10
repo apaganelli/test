@@ -40,11 +40,11 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 
 
-public class Person extends Agent {
+public class Worker extends Agent {
 	/**
 	 * 
 	 */
-	public static final int NUM_CATEGORIES = 4;
+	public static final int NUM_CATEGORIES = 6;
 	private static final long serialVersionUID = 1L;
 	
 	private List<String> goals = new ArrayList<String>();
@@ -57,7 +57,7 @@ public class Person extends Agent {
 	/*
 	 *  Creates the agent
 	 */
-	public Person(int wkTime, double bound) {
+	public Worker(int wkTime, double bound) {
 		this.workingTime = wkTime;
 		this.superiorBound = bound;
 	}
@@ -85,7 +85,7 @@ public class Person extends Agent {
 		}
 		
 		
-		addBehaviour(new PersonBehaviour(this, this));
+		addBehaviour(new WorkerBehaviour(this, this));
 	}
 	
 	protected void takeDown() {
@@ -109,7 +109,7 @@ public class Person extends Agent {
 	/*
 	 *  Stores one activity and update status
 	 */
-	public void setOneActivity(Activity item) {
+	public void setActivity(Activity item) {
 		
 		if (item != null) {
 			item.setStatus(Activity.CAT_STATUS_ALLOCATED);
@@ -143,7 +143,7 @@ public class Person extends Agent {
 		int amount = 0;
 		
 		if (cat.equalsIgnoreCase("All"))
-			for(int i = 0; i < Person.NUM_CATEGORIES; i++)
+			for(int i = 0; i < Worker.NUM_CATEGORIES; i++)
 				amount += this.categories[i];
 		else 
 			amount = this.categories[BacklogManager.getCategoryIndex(cat)];
@@ -177,7 +177,7 @@ public class Person extends Agent {
 	public boolean hasActvitiestoExchange() {
 		int idx_goal = BacklogManager.getCategoryIndex(this.goals.get(0).substring(1));
 		
-		for(int i = 0; i < Person.NUM_CATEGORIES; i++)
+		for(int i = 0; i < Worker.NUM_CATEGORIES; i++)
 			if ((this.categories[i] > 1) && (idx_goal != i)) {
 				return true;	
 			}
@@ -288,7 +288,7 @@ public class Person extends Agent {
 	}
 	
 	public int[] getTotalbyCategory() {
-		int[] totals = new int[Person.NUM_CATEGORIES];
+		int[] totals = new int[Worker.NUM_CATEGORIES];
 		int j = 0;
 		
 		for (Activity item: this.activities) {
@@ -303,7 +303,7 @@ public class Person extends Agent {
 	 * Checks if every category has at least one activity.
 	 */
 	private boolean checkAllCategoriesAttended() {
-		for(int i = 0; i < Person.NUM_CATEGORIES; i++)
+		for(int i = 0; i < Worker.NUM_CATEGORIES; i++)
 			if (this.categories[i] == 0)
 				return false;		
 		return true;
@@ -317,7 +317,7 @@ public class Person extends Agent {
 		int idx_min = -1;
 		int max = 0;
 		int idx_max = -1;
-		int[] time = new int[Person.NUM_CATEGORIES];
+		int[] time = new int[Worker.NUM_CATEGORIES];
 		List<String> goals = this.getGoals();
 		
 		/*
@@ -330,7 +330,7 @@ public class Person extends Agent {
 		/*
 		 *  Checks the category with max and min time.
 		 */
-		for(int i = 0; i < Person.NUM_CATEGORIES; i++) { 
+		for(int i = 0; i < Worker.NUM_CATEGORIES; i++) { 
 			if (time[i] > max) {
 				max = time[i];
 				idx_max = i;
